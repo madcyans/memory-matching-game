@@ -1,7 +1,6 @@
-// src/App.js
 import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
-import "./App.css"; // Contains our Tailwind directives and custom CSS
+import "./App.css"; // Contains our Tailwind directives, custom CSS, and our animation classes
 
 // Define the initial set of cards (each symbol appears twice)
 const initialCards = [
@@ -24,7 +23,7 @@ const initialCards = [
 const shuffleArray = (array) => array.sort(() => Math.random() - 0.5);
 
 function App() {
-  // State variables for cards, selections, moves, and best score.
+  // Game state variables
   const [cards, setCards] = useState([]);
   const [firstChoice, setFirstChoice] = useState(null);
   const [secondChoice, setSecondChoice] = useState(null);
@@ -34,12 +33,15 @@ function App() {
     Number(localStorage.getItem("bestScore")) || Infinity
   );
 
-  // When the component mounts, initialize the cards by shuffling them.
+  // Weather state (e.g., "Clear", "Rain", "Cloudy")
+  const [weather, setWeather] = useState(null);
+
+  // Initialize the cards when the component mounts.
   useEffect(() => {
     setCards(shuffleArray([...initialCards]));
   }, []);
 
-  // Function to handle a card click.
+  // Handle a card click.
   const handleChoice = (card) => {
     if (!firstChoice) {
       setFirstChoice(card);
@@ -48,12 +50,11 @@ function App() {
     }
   };
 
-  // When two cards are selected, check if they match.
+  // Check for matching cards when two choices are made.
   useEffect(() => {
     if (firstChoice && secondChoice) {
-      setDisabled(true); // Disable further clicks during check
+      setDisabled(true);
       if (firstChoice.symbol === secondChoice.symbol) {
-        // Mark matching cards
         setCards((prevCards) =>
           prevCards.map((card) =>
             card.symbol === firstChoice.symbol ? { ...card, matched: true } : card
@@ -61,10 +62,9 @@ function App() {
         );
         resetTurn();
       } else {
-        // Wait a moment so the user can see the cards, then flip back
         setTimeout(() => resetTurn(), 1000);
       }
-      setMoves((prevMoves) => prevMoves + 1); // Increase move counter
+      setMoves((prevMoves) => prevMoves + 1);
     }
   }, [firstChoice, secondChoice]);
 
@@ -75,7 +75,7 @@ function App() {
     setDisabled(false);
   };
 
-  // Once all cards are matched, update the best score (if applicable).
+  // Update best score when all cards are matched.
   useEffect(() => {
     if (cards.length > 0 && cards.every((card) => card.matched)) {
       if (moves < bestScore) {
@@ -85,19 +85,108 @@ function App() {
     }
   }, [cards, moves, bestScore]);
 
+  // Fetch current weather using user's geolocation.
+  useEffect(() => {
+    console.log("Weather API Key:", process.env.REACT_APP_WEATHER_API_KEY);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords: { latitude, longitude } }) => {
+          console.log("Coordinates:", latitude, longitude);
+          fetch(
+            `https://api.weatherapi.com/v1/current.json?key=${process.env.REACT_APP_WEATHER_API_KEY}&q=${latitude},${longitude}`
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              console.log("Weather data received:", data);
+              setWeather(data.current.condition.text);
+            })
+            .catch((err) => console.error("Weather API error:", err));
+        },
+        (error) => console.error("Geolocation error:", error)
+      );
+    } else {
+      console.error("Geolocation is not available");
+    }
+  }, []);
+
+  // Determine background style based on the weather.
+  const getBackgroundStyle = () => {
+    if (weather) {
+      const condition = weather.toLowerCase();
+      if (
+        condition.includes("rain") ||
+        condition.includes("thunder") ||
+        condition.includes("drizzle") ||
+        condition.includes("storm")
+      ) {
+        return {
+          backgroundColor: "#94a3b8",
+          backgroundImage: "url('/images/rain.png')",
+          backgroundRepeat: "repeat-y",
+          backgroundSize: "auto", // so the image tiles
+          backgroundPosition: "0 0", // initial position
+        };
+      } else if (
+        condition.includes("cloud") ||
+        condition.includes("overcast") ||
+        condition.includes("mist")
+      ) {
+        return {
+          backgroundColor: "#e2e8f0",
+          backgroundImage: "url('/images/cloud.png')",
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "cover",
+          backgroundPosition: "0 0",
+        };
+      } else if (
+        condition.includes("clear") ||
+        condition.includes("sunny") ||
+        condition.includes("fair")
+      ) {
+        return {
+          backgroundColor: "#bbf7d0",
+          backgroundImage: "url('/images/clear.png')",
+          backgroundRepeat: "repeat-x",
+          backgroundSize: "contain",
+          backgroundPosition: "0 0",
+        };
+      }
+    }
+    return {
+      backgroundColor: "#bbf7d0",
+      backgroundImage: "url('/images/clear.png')",
+      backgroundRepeat: "repeat-x",
+      backgroundSize: "contain",
+      backgroundPosition: "0 0",
+    };
+  };
+
+  // Determine which animation class to use based on weather.
+  const animationClass =
+    weather &&
+    (weather.toLowerCase().includes("rain") ||
+      weather.toLowerCase().includes("thunder") ||
+      weather.toLowerCase().includes("drizzle") ||
+      weather.toLowerCase().includes("storm"))
+      ? "animate-rain"
+      : "animate-sun";
+
   return (
     <div
-      className="relative min-h-screen overflow-hidden animate-fruits"
-      style={{
-        backgroundColor: "#bbf7d0", // Tailwind blue-500
-        backgroundImage: "url('/fruits.png')",
-        backgroundRepeat: "repeat-x",
-        backgroundSize: "contain",  // Adjust as needed (or use 'cover', 'auto', etc.)
-      }}
+      className={`relative w-full h-full overflow-hidden ${animationClass} full-screen-container`}
+      style={getBackgroundStyle()}
     >
-      {/* Your game content */}
+      {/* Weather display in the top-right corner */}
+      <div className="absolute top-4 right-4 bg-gray-800 text-cyan-200 px-4 py-2 rounded shadow-lg flex items-center gap-2">
+        <span className="text-lg font-semibold">Weather:</span>
+        {weather ? (
+          <span className="text-base">{weather}</span>
+        ) : (
+          <span className="text-sm text-gray-400">Loading...</span>
+        )}
+      </div>
       <div className="relative flex flex-col items-center p-4">
-        <h1 className="text-4xl font-bold text-gray-800 my-4">
+        <h1 className="text-4xl font-bold text-gray-800 my-12">
           Memory Matching Game
         </h1>
         <div className="text-lg text-gray-700">
@@ -115,7 +204,6 @@ function App() {
         />
         <button
           onClick={() => {
-            // Restart the game by resetting states and shuffling cards
             setCards(shuffleArray([...initialCards]));
             setMoves(0);
             setFirstChoice(null);

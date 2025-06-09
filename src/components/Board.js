@@ -8,7 +8,7 @@ const Board = ({ cards, handleChoice, firstChoice, secondChoice, disabled }) => 
     // - grid-cols-2 on smaller screens,
     // - md:grid-cols-3 on medium screens,
     // - lg:grid-cols-4 on large screens.
-    <div className="grid grid-cols-3 gap-4 mt-8 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+    <div className="grid grid-cols-4 gap-4 mt-8">
       {cards.map((card) => (
         <Card
           key={card.id}

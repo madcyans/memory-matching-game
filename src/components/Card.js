@@ -11,7 +11,7 @@ const Card = ({ card, handleChoice, flipped, disabled }) => {
 
   return (
     // The outer div sets the card size and applies a perspective so the 3D transform works.
-    <div className="w-32 h-48 cursor-pointer perspective" onClick={handleClick}>
+    <div className="w-24 h-36 cursor-pointer perspective" onClick={handleClick}>
       {/* The inner div rotates based on the flipped prop */}
       <div
         className="relative w-full h-full duration-500 border-2 border-gray-500 rounded"

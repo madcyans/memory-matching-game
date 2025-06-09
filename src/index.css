@@ -1,3 +1,14 @@
+/* Ensure the entire viewport is used and prevent scrolling */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,28 +16,43 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-/* Tailwind CSS styles for the fruits animation */
-@keyframes moveFruits {
-  /* Start off-screen on the left */
+/* Keyframes for downward movement */
+@keyframes rain-animation {
   from {
-    background-position: 0 0;
+    background-position: 0 100%;
   }
   to {
-    background-position: 1000px 0;
+    background-position: 0 0;
   }
 }
 
-.animate-fruits {
-  animation: moveFruits 10s linear infinite; 
+/* Animation class for rain background */
+.animate-rain {
+  animation: rain-animation 10s linear infinite;
+  animation-direction: normal;
 }
+
+/* Example keyframes for left-to-right movement */
+@keyframes sun-animation {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+.animate-sun { 
+  animation: sun-animation 10s linear infinite;
+  animation-direction: normal;
+}
+
