@@ -31,28 +31,27 @@ code {
     background-position: 0 100%;
   }
   to {
-    background-position: 0 0;
+    background-position: 0 21.5%;
   }
 }
 
 /* Animation class for rain background */
 .animate-rain {
-  animation: rain-animation 10s linear infinite;
+  animation: rain-animation 5s linear infinite;
   animation-direction: normal;
 }
 
-/* Example keyframes for left-to-right movement */
 @keyframes sun-animation {
   from {
     background-position: 100% 0;
   }
   to {
-    background-position: 0 0;
+    background-position: 21.5% 0;
   }
 }
 
 .animate-sun { 
-  animation: sun-animation 10s linear infinite;
+  animation: sun-animation 5s linear infinite;
   animation-direction: normal;
 }
 

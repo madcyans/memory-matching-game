@@ -110,56 +110,57 @@ function App() {
   }, []);
 
   // Determine background style based on the weather.
-  const getBackgroundStyle = () => {
-    if (weather) {
-      const condition = weather.toLowerCase();
-      if (
-        condition.includes("rain") ||
-        condition.includes("thunder") ||
-        condition.includes("drizzle") ||
-        condition.includes("storm")
-      ) {
-        return {
-          backgroundColor: "#94a3b8",
-          backgroundImage: "url('/images/rain.png')",
-          backgroundRepeat: "repeat-y",
-          backgroundSize: "auto", // so the image tiles
-          backgroundPosition: "0 0", // initial position
-        };
-      } else if (
-        condition.includes("cloud") ||
-        condition.includes("overcast") ||
-        condition.includes("mist")
-      ) {
-        return {
-          backgroundColor: "#e2e8f0",
-          backgroundImage: "url('/images/cloud.png')",
-          backgroundRepeat: "repeat-x",
-          backgroundSize: "cover",
-          backgroundPosition: "0 0",
-        };
-      } else if (
-        condition.includes("clear") ||
-        condition.includes("sunny") ||
-        condition.includes("fair")
-      ) {
-        return {
-          backgroundColor: "#bbf7d0",
-          backgroundImage: "url('/images/clear.png')",
-          backgroundRepeat: "repeat-x",
-          backgroundSize: "contain",
-          backgroundPosition: "0 0",
-        };
-      }
+const getBackgroundStyle = () => {
+  if (weather) {
+    const condition = weather.toLowerCase();
+    if (
+      condition.includes("rain") ||
+      condition.includes("thunder") ||
+      condition.includes("drizzle") ||
+      condition.includes("storm")
+    ) {
+      return {
+        backgroundColor: "#94a3b8",
+        backgroundImage: "url('/images/rain.png')",
+        backgroundRepeat: "repeat-y",
+        backgroundSize: "auto",
+        // Let the animation keyframes control backgroundPosition
+      };
+    } else if (
+      condition.includes("cloud") ||
+      condition.includes("overcast") ||
+      condition.includes("mist")
+    ) {
+      return {
+        backgroundColor: "#e2e8f0",
+        backgroundImage: "url('/images/cloud.png')",
+        backgroundRepeat: "repeat-x",
+        // Using "auto" instead of "cover" so the image is larger and panning is noticeable.
+        backgroundSize: "auto",
+        // Remove backgroundPosition so the animate-sun keyframes can take effect.
+      };
+    } else if (
+      condition.includes("clear") ||
+      condition.includes("sunny") ||
+      condition.includes("fair")
+    ) {
+      return {
+        backgroundColor: "#bbf7d0",
+        backgroundImage: "url('/images/clear.png')",
+        backgroundRepeat: "repeat-x",
+        backgroundSize: "contain",
+        // No inline backgroundPosition here
+      };
     }
-    return {
-      backgroundColor: "#bbf7d0",
-      backgroundImage: "url('/images/clear.png')",
-      backgroundRepeat: "repeat-x",
-      backgroundSize: "contain",
-      backgroundPosition: "0 0",
-    };
+  }
+  // Default style if weather is not set
+  return {
+    backgroundColor: "#bbf7d0",
+    backgroundImage: "url('/images/clear.png')",
+    backgroundRepeat: "repeat-x",
+    backgroundSize: "contain",
   };
+};
 
   // Determine which animation class to use based on weather.
   const animationClass =
